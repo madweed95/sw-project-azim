@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import { Message, getMessage } from '../data/messages';
 import {
   IonBackButton,
   IonButtons,
@@ -18,13 +17,8 @@ import { useParams } from 'react-router';
 import './ViewMessage.css';
 
 function ViewMessage() {
-  const [message, setMessage] = useState<Message>();
+  const [message, setMessage] = useState<any>();
   const params = useParams<{ id: string }>();
-
-  useIonViewWillEnter(() => {
-    const msg = getMessage(parseInt(params.id, 10));
-    setMessage(msg);
-  });
 
   return (
     <IonPage id="view-message-page">
@@ -37,7 +31,7 @@ function ViewMessage() {
       </IonHeader>
 
       <IonContent fullscreen>
-        {message ? (
+        {/* {message ? (
           <>
             <IonItem>
               <IonIcon icon={personCircle} color="primary"></IonIcon>
@@ -69,7 +63,8 @@ function ViewMessage() {
           </>
         ) : (
           <div>Message not found</div>
-        )}
+        )} */}
+        <h1>{ }</h1>
       </IonContent>
     </IonPage>
   );

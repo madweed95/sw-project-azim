@@ -1,39 +1,61 @@
-import MessageListItem from '../components/MessageListItem';
-import { useState } from 'react';
-import { Message, getMessages } from '../data/messages';
+
 import {
   IonContent,
   IonHeader,
+  IonItem,
+  IonLabel,
   IonList,
   IonPage,
   IonRefresher,
   IonRefresherContent,
   IonTitle,
   IonToolbar,
-  useIonViewWillEnter
 } from '@ionic/react';
 import './Home.css';
+import React, { useState } from 'react';
+import axios from 'axios';
+
+
+
+
+export interface Hero {
+  name: string;
+  height: string;
+  mass: string;
+  gender: string;
+  films: string[];
+  starships: string[];
+}
 
 const Home: React.FC = () => {
+  const [heroes, setHeroes] = useState<Hero[]>([]);
 
-  const [messages, setMessages] = useState<Message[]>([]);
-
-  useIonViewWillEnter(() => {
-    const msgs = getMessages();
-    setMessages(msgs);
-  });
-
+  React.useEffect(() => {
+    fetchHeroes()
+  }, [])
   const refresh = (e: CustomEvent) => {
     setTimeout(() => {
       e.detail.complete();
     }, 3000);
   };
 
+  const URL = 'https://swapi.dev/api/people';
+  const fetchHeroes = () => {
+
+    return axios({
+      url: URL,
+      method: 'get'
+    }).then(response => {
+      setHeroes(response.data.results);
+      console.log(heroes)
+    })
+  };
+
   return (
     <IonPage id="home-page">
       <IonHeader>
         <IonToolbar>
-          <IonTitle>Inbox</IonTitle>
+          <IonTitle>Star Wars Heroes</IonTitle>
         </IonToolbar>
       </IonHeader>
       <IonContent fullscreen>
@@ -50,11 +72,15 @@ const Home: React.FC = () => {
         </IonHeader>
 
         <IonList>
-          {messages.map(m => <MessageListItem key={m.id} message={m} />)}
+          {heroes.map(h =>
+            <IonItem routerLink={`/message/${h.name}`} detail={false}>
+              <div slot="start" className="dot dot-unread"></div>
+              <IonLabel className="ion-text-wrap">{h.name}</IonLabel>
+            </IonItem>)}
         </IonList>
       </IonContent>
     </IonPage>
-  );
+  )
 };
 
 export default Home;
