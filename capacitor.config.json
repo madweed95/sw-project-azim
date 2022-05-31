@@ -1,0 +1,6 @@
+{
+	"appId": "io.ionic.starter",
+	"appName": "SW.project.Azim",
+	"webDir": "build",
+	"bundledWebRuntime": false
+}

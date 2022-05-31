@@ -1,0 +1,8 @@
+{
+  "name": "SW.project.Azim",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "react",
+  "id": "dd4d01d9"
+}
