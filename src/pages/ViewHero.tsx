@@ -15,6 +15,7 @@ import { useLocation, useParams } from 'react-router';
 import { Hero } from './Home';
 import React from 'react';
 
+
 export const CardExamples: React.FC = () => {
   const [hero, setHero] = useState<Hero>();
   const location = useLocation();
@@ -22,7 +23,7 @@ export const CardExamples: React.FC = () => {
   React.useEffect(() => {
     setHero(parHero.params)
   }, [])
-
+  console.log(hero?.starships)
 
   return (
     <IonPage id="view-hero-page">
@@ -36,22 +37,22 @@ export const CardExamples: React.FC = () => {
       <IonContent>
         <IonCard>
           <IonCardHeader>
-            <IonCardTitle>{hero?.name}</IonCardTitle>
+            <IonCardTitle></IonCardTitle>
           </IonCardHeader>
 
-
           <IonCardContent>
-            <h1>Information</h1>
+            <h1>{hero?.name}</h1>
             <ul>
-              <li>gender: { }</li>
+              <li>Height: {hero?.height}</li>
+              <li>Mass: {hero?.mass}</li>
+              <li>Gender: {hero?.gender}</li>
             </ul>
           </IonCardContent>
         </IonCard>
 
         <IonCard>
           <IonCardContent>
-            This is content, without any paragraph or header tags,
-            within an ion-cardContent element.
+
           </IonCardContent>
         </IonCard>
       </IonContent>
