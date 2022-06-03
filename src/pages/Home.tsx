@@ -14,9 +14,8 @@ import {
 import './Home.css';
 import React, { useState } from 'react';
 import axios from 'axios';
-
-
-
+import { Link } from 'react-router-dom';
+import { useHistory } from 'react-router-dom'
 
 export interface Hero {
   name: string;
@@ -28,11 +27,13 @@ export interface Hero {
 }
 
 const Home: React.FC = () => {
+  let history = useHistory()
   const [heroes, setHeroes] = useState<Hero[]>([]);
 
   React.useEffect(() => {
     fetchHeroes()
   }, [])
+
   const refresh = (e: CustomEvent) => {
     setTimeout(() => {
       e.detail.complete();
@@ -48,6 +49,7 @@ const Home: React.FC = () => {
     }).then(response => {
       setHeroes(response.data.results);
       console.log(heroes)
+
     })
   };
 
@@ -71,16 +73,22 @@ const Home: React.FC = () => {
           </IonToolbar>
         </IonHeader>
 
-        <IonList>
+        <IonList >
           {heroes.map(h =>
-            <IonItem routerLink={`/message/${h.name}`} detail={false}>
+            <IonItem key={h.name} onClick={() => {
+              history.push(`/hero/${h.name}`, { params: h })
+            }
+            }>
               <div slot="start" className="dot dot-unread"></div>
               <IonLabel className="ion-text-wrap">{h.name}</IonLabel>
             </IonItem>)}
+
         </IonList>
-      </IonContent>
-    </IonPage>
+      </IonContent >
+    </IonPage >
+
   )
+
 };
 
 export default Home;
