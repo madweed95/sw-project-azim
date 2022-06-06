@@ -26,6 +26,7 @@ export interface Hero {
 }
 
 const Home: React.FC = () => {
+
   let history = useHistory()
   const [heroes, setHeroes] = useState<Hero[]>([]);
 
@@ -40,16 +41,14 @@ const Home: React.FC = () => {
   };
 
   const URL = 'https://swapi.dev/api/people';
-  const fetchHeroes = () => {
+  const fetchHeroes = async () => {
 
-    return axios({
+    const response = await axios({
       url: URL,
       method: 'get'
-    }).then(response => {
-      setHeroes(response.data.results);
-      console.log(heroes)
-
-    })
+    });
+    setHeroes(response.data.results);
+    console.log(heroes)
   };
 
   return (

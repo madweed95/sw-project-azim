@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import {
   IonBackButton,
   IonButtons,
@@ -10,22 +9,57 @@ import {
   IonCardHeader,
   IonCardTitle,
   IonCardContent,
+  IonSegment,
+  IonSegmentButton,
+  IonLabel,
+  IonIcon,
+  IonTitle,
+  IonItem,
+  IonThumbnail,
 } from '@ionic/react';
 import { useLocation, useParams } from 'react-router';
 import { Hero } from './Home';
 import React from 'react';
+import { useState } from 'react';
+import { rocket, film, analytics } from 'ionicons/icons';
+import axios from 'axios';
 
+export interface Ship {
+  name: string;
+  model: string;
+  starship_class: string;
+}
 
-export const CardExamples: React.FC = () => {
+const CardHeroes: React.FC = () => {
+
+  const [ship, setShip] = useState<Ship>();
   const [hero, setHero] = useState<Hero>();
+
+  React.useEffect(() => {
+    setHero(parHero.params);
+    fetchShip();
+  }, [])
+
+
   const location = useLocation();
   const parHero: any = location.state;
-  React.useEffect(() => {
-    setHero(parHero.params)
-  }, [])
-  console.log(hero?.starships)
+
+
+
+  const fetchShip = async () => {
+    const response = await axios({
+      url: hero?.starships[0],
+      method: 'get'
+    });
+    setShip(response.data);
+  };
+
+
+  const [shipActive, setShipActive] = useState<boolean>(true);
+  const [filmActive, setFilmActive] = useState<boolean>(false);
 
   return (
+
     <IonPage id="view-hero-page">
       <IonHeader translucent>
         <IonToolbar>
@@ -34,12 +68,9 @@ export const CardExamples: React.FC = () => {
           </IonButtons>
         </IonToolbar>
       </IonHeader>
+
       <IonContent>
         <IonCard>
-          <IonCardHeader>
-            <IonCardTitle></IonCardTitle>
-          </IonCardHeader>
-
           <IonCardContent>
             <h1>{hero?.name}</h1>
             <ul>
@@ -50,16 +81,52 @@ export const CardExamples: React.FC = () => {
           </IonCardContent>
         </IonCard>
 
-        <IonCard>
-          <IonCardContent>
+        <IonSegment value={shipActive ? "starships" : "films"}>
+          <IonSegmentButton
+            value="starships"
+            onClick={() => {
+              setShipActive(true);
+              setFilmActive(false);
+            }}
+          >
+            <IonLabel>Starships</IonLabel>
+            <IonIcon icon={rocket} />
+          </IonSegmentButton>
 
-          </IonCardContent>
-        </IonCard>
+          <IonSegmentButton
+            value="films"
+            onClick={() => {
+              setShipActive(false);
+              setFilmActive(true);
+            }}
+          >
+            <IonIcon icon={film} />
+            <IonLabel>Films</IonLabel>
+          </IonSegmentButton>
+        </IonSegment>
+        <IonContent className="ion-padding">
+          {shipActive ? (
+            <IonCard>
+              <ul>
+                <li>ship name : {ship?.name}</li>
+                <li>ship model : {ship?.model}</li>
+                <li>ship class : {ship?.starship_class}</li>
+              </ul>
+            </IonCard>
+          ) : (
+            <IonCard>
+              {hero?.films[0]}
+            </IonCard>
+
+          )}
+        </IonContent>
       </IonContent>
-    </IonPage>
+    </IonPage >
   );
+
+
 };
 
-export default CardExamples;
+export default CardHeroes;
 
 
