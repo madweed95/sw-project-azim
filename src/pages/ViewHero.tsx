@@ -21,38 +21,54 @@ import { useLocation, useParams } from 'react-router';
 import { Hero } from './Home';
 import React from 'react';
 import { useState } from 'react';
-import { rocket, film, analytics } from 'ionicons/icons';
+import { rocket, film } from 'ionicons/icons';
 import axios from 'axios';
-
-export interface Ship {
-  name: string;
-  model: string;
-  starship_class: string;
-}
+import { title } from 'process';
 
 const CardHeroes: React.FC = () => {
 
-  const [ship, setShip] = useState<Ship>();
   const [hero, setHero] = useState<Hero>();
+  const [ships, setShips] = useState<string[]>([]);
+  const [films, setFilms] = useState<string[]>([]);
 
-  React.useEffect(() => {
-    setHero(parHero.params);
-    fetchShip();
-  }, [])
-
-
-  const location = useLocation();
+  const location = useLocation<[]>();
   const parHero: any = location.state;
 
 
 
-  const fetchShip = async () => {
-    const response = await axios({
-      url: hero?.starships[0],
-      method: 'get'
-    });
-    setShip(response.data);
-  };
+
+  React.useEffect(() => {
+    setHero(parHero.params);
+  }, [])
+
+
+
+  React.useEffect(() => {
+
+    if (hero) {
+
+      axios.all(hero.films.map(f => axios.get(f)))
+        .then((value) => {
+          let filmsData: string[] = [];
+          value.map(filmData => {
+            filmsData.push(filmData.data.title);
+          })
+          setFilms(filmsData)
+        })
+    }
+
+    if (hero) {
+
+      axios.all(hero.starships.map(s => axios.get(s)))
+        .then((value) => {
+          let shipsData: string[] = [];
+          value.map(data => {
+            shipsData.push(data.data.name);
+          })
+          setShips(shipsData)
+        })
+    }
+  }, [hero])
 
 
   const [shipActive, setShipActive] = useState<boolean>(true);
@@ -107,15 +123,23 @@ const CardHeroes: React.FC = () => {
         <IonContent className="ion-padding">
           {shipActive ? (
             <IonCard>
-              <ul>
-                <li>ship name : {ship?.name}</li>
-                <li>ship model : {ship?.model}</li>
-                <li>ship class : {ship?.starship_class}</li>
-              </ul>
+
+              {ships.map(s =>
+                <ul key={s}>
+                  <li>{s}</li>
+                </ul>
+              )}
+
             </IonCard>
           ) : (
             <IonCard>
-              {hero?.films[0]}
+
+              {films.map(f =>
+                <ul key={f}>
+                  <li>{f}</li>
+                </ul>
+              )}
+
             </IonCard>
 
           )}

@@ -43,12 +43,13 @@ const Home: React.FC = () => {
   const URL = 'https://swapi.dev/api/people';
   const fetchHeroes = async () => {
 
-    const response = await axios({
+
+    return axios({
       url: URL,
       method: 'get'
-    });
-    setHeroes(response.data.results);
-    console.log(heroes)
+    }).then(response => {
+      setHeroes(response.data.results);
+    })
   };
 
   return (
