@@ -6,24 +6,18 @@ import {
   IonPage,
   IonToolbar,
   IonCard,
-  IonCardHeader,
-  IonCardTitle,
   IonCardContent,
   IonSegment,
   IonSegmentButton,
   IonLabel,
   IonIcon,
-  IonTitle,
-  IonItem,
-  IonThumbnail,
 } from '@ionic/react';
-import { useLocation, useParams } from 'react-router';
+import { useLocation } from 'react-router';
 import { Hero } from './Home';
 import React from 'react';
 import { useState } from 'react';
 import { rocket, film } from 'ionicons/icons';
 import axios from 'axios';
-import { title } from 'process';
 
 const CardHeroes: React.FC = () => {
 
@@ -62,8 +56,8 @@ const CardHeroes: React.FC = () => {
       axios.all(hero.starships.map(s => axios.get(s)))
         .then((value) => {
           let shipsData: string[] = [];
-          value.map(data => {
-            shipsData.push(data.data.name);
+          value.map(ship => {
+            shipsData.push(ship.data.name);
           })
           setShips(shipsData)
         })
