@@ -11,70 +11,56 @@ import {
   IonSegmentButton,
   IonLabel,
   IonIcon,
-} from '@ionic/react';
-import { useLocation } from 'react-router';
-import { Hero } from './Home';
-import React from 'react';
-import { useState } from 'react';
-import { rocket, film } from 'ionicons/icons';
-import axios from 'axios';
+} from "@ionic/react";
+import { useLocation } from "react-router";
+import { Hero } from "./Home";
+import React from "react";
+import { useState } from "react";
+import { rocket, film } from "ionicons/icons";
+import axios from "axios";
 
 const CardHeroes: React.FC = () => {
-
   const [hero, setHero] = useState<Hero>();
   const [ships, setShips] = useState<string[]>([]);
   const [films, setFilms] = useState<string[]>([]);
+  const [selectedSegment, setselectedSegment] = useState<string>("starships");
 
   const location = useLocation<[]>();
   const parHero: any = location.state;
 
-
-
-
   React.useEffect(() => {
     setHero(parHero.params);
-  }, [])
-
-
+  }, []);
 
   React.useEffect(() => {
-
     if (hero) {
+      axios.all(hero.films.map((f) => axios.get(f))).then((value) => {
+        let filmsData: string[] = [];
+        value.map((filmData) => {
+          filmsData.push(filmData.data.title);
+        });
+        setFilms(filmsData);
+      });
 
-      axios.all(hero.films.map(f => axios.get(f)))
-        .then((value) => {
-          let filmsData: string[] = [];
-          value.map(filmData => {
-            filmsData.push(filmData.data.title);
-          })
-          setFilms(filmsData)
-        })
+      axios.all(hero.starships.map((s) => axios.get(s))).then((value) => {
+        let shipsData: string[] = [];
+        value.map((ship) => {
+          shipsData.push(ship.data.name);
+        });
+        setShips(shipsData);
+      });
     }
-
-    if (hero) {
-
-      axios.all(hero.starships.map(s => axios.get(s)))
-        .then((value) => {
-          let shipsData: string[] = [];
-          value.map(ship => {
-            shipsData.push(ship.data.name);
-          })
-          setShips(shipsData)
-        })
-    }
-  }, [hero])
-
-
-  const [shipActive, setShipActive] = useState<boolean>(true);
-  const [filmActive, setFilmActive] = useState<boolean>(false);
+  }, [hero]);
 
   return (
-
     <IonPage id="view-hero-page">
       <IonHeader translucent>
         <IonToolbar>
           <IonButtons slot="start">
-            <IonBackButton text="List of Heroes" defaultHref="/home"></IonBackButton>
+            <IonBackButton
+              text="List of Heroes"
+              defaultHref="/home"
+            ></IonBackButton>
           </IonButtons>
         </IonToolbar>
       </IonHeader>
@@ -91,12 +77,11 @@ const CardHeroes: React.FC = () => {
           </IonCardContent>
         </IonCard>
 
-        <IonSegment value={shipActive ? "starships" : "films"}>
+        <IonSegment value={selectedSegment}>
           <IonSegmentButton
             value="starships"
             onClick={() => {
-              setShipActive(true);
-              setFilmActive(false);
+              setselectedSegment("starships");
             }}
           >
             <IonLabel>Starships</IonLabel>
@@ -106,45 +91,33 @@ const CardHeroes: React.FC = () => {
           <IonSegmentButton
             value="films"
             onClick={() => {
-              setShipActive(false);
-              setFilmActive(true);
+              setselectedSegment("films");
             }}
           >
             <IonIcon icon={film} />
             <IonLabel>Films</IonLabel>
           </IonSegmentButton>
         </IonSegment>
-        <IonContent className="ion-padding">
-          {shipActive ? (
-            <IonCard>
 
-              {ships.map(s =>
+        <IonContent className="ion-padding">
+          <IonCard>
+            {selectedSegment === "starships" &&
+              ships.map((s) => (
                 <ul key={s}>
                   <li>{s}</li>
                 </ul>
-              )}
-
-            </IonCard>
-          ) : (
-            <IonCard>
-
-              {films.map(f =>
+              ))}
+            {selectedSegment === "films" &&
+              films.map((f) => (
                 <ul key={f}>
                   <li>{f}</li>
                 </ul>
-              )}
-
-            </IonCard>
-
-          )}
+              ))}
+          </IonCard>
         </IonContent>
       </IonContent>
-    </IonPage >
+    </IonPage>
   );
-
-
 };
 
 export default CardHeroes;
-
-
