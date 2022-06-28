@@ -61,7 +61,7 @@ const Home: React.FC = () => {
       if (heroes.length === 10) {
         setInfiniteDisabled(true);
       }
-    }, 500);
+    }, 800);
   };
 
   React.useEffect(() => {
