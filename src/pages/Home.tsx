@@ -1,5 +1,4 @@
 import {
-  IonButton,
   IonContent,
   IonHeader,
   IonInfiniteScroll,
@@ -8,28 +7,17 @@ import {
   IonLabel,
   IonList,
   IonPage,
-  IonRefresher,
-  IonRefresherContent,
   IonSpinner,
   IonTitle,
   IonToolbar,
-  useIonViewWillEnter,
 } from "@ionic/react";
 import React, { useState } from "react";
 import axios from "axios";
 import { useHistory } from "react-router-dom";
 import "./Css/Style.css";
-import { push } from "ionicons/icons";
+import { useQuery } from "react-query";
 
 export interface Hero {
-  name: string;
-  height: string;
-  mass: string;
-  gender: string;
-  films: string[];
-  starships: string[];
-}
-export interface Hero2 {
   name: string;
   height: string;
   mass: string;
@@ -67,7 +55,6 @@ const Home: React.FC = () => {
   React.useEffect(() => {
     fetchHeroes();
   }, []);
-
   const URL = "https://swapi.dev/api/people";
   const fetchHeroes = () => {
     return axios({
