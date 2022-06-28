@@ -11,6 +11,7 @@ import {
   IonSegmentButton,
   IonLabel,
   IonIcon,
+  IonSpinner,
 } from "@ionic/react";
 import { useLocation } from "react-router";
 import { Hero } from "./Home";
@@ -23,7 +24,8 @@ const CardHeroes: React.FC = () => {
   const [hero, setHero] = useState<Hero>();
   const [ships, setShips] = useState<string[]>([]);
   const [films, setFilms] = useState<string[]>([]);
-  const [selectedSegment, setselectedSegment] = useState<string>("starships");
+  const [selectedSegment, setselectedSegment] = useState<string>("films");
+  const [isLoading, setIsLoading] = useState(true);
 
   const location = useLocation<[]>();
   const parHero: any = location.state;
@@ -40,6 +42,7 @@ const CardHeroes: React.FC = () => {
           filmsData.push(filmData.data.title);
         });
         setFilms(filmsData);
+        setIsLoading(false);
       });
 
       axios.all(hero.starships.map((s) => axios.get(s))).then((value) => {
@@ -51,6 +54,9 @@ const CardHeroes: React.FC = () => {
       });
     }
   }, [hero]);
+  if (isLoading) {
+    return <IonSpinner name="crescent" className="spinnerCenter"></IonSpinner>;
+  }
 
   return (
     <IonPage id="view-hero-page">
@@ -79,16 +85,6 @@ const CardHeroes: React.FC = () => {
 
         <IonSegment value={selectedSegment}>
           <IonSegmentButton
-            value="starships"
-            onClick={() => {
-              setselectedSegment("starships");
-            }}
-          >
-            <IonLabel>Starships</IonLabel>
-            <IonIcon icon={rocket} />
-          </IonSegmentButton>
-
-          <IonSegmentButton
             value="films"
             onClick={() => {
               setselectedSegment("films");
@@ -97,20 +93,29 @@ const CardHeroes: React.FC = () => {
             <IonIcon icon={film} />
             <IonLabel>Films</IonLabel>
           </IonSegmentButton>
+          <IonSegmentButton
+            value="starships"
+            onClick={() => {
+              setselectedSegment("starships");
+            }}
+          >
+            <IonLabel>Starships</IonLabel>
+            <IonIcon icon={rocket} />
+          </IonSegmentButton>
         </IonSegment>
 
         <IonContent className="ion-padding">
           <IonCard>
-            {selectedSegment === "starships" &&
-              ships.map((s) => (
-                <ul key={s}>
-                  <li>{s}</li>
-                </ul>
-              ))}
             {selectedSegment === "films" &&
               films.map((f) => (
                 <ul key={f}>
                   <li>{f}</li>
+                </ul>
+              ))}
+            {selectedSegment === "starships" &&
+              ships.map((s) => (
+                <ul key={s}>
+                  <li>{s}</li>
                 </ul>
               ))}
           </IonCard>
