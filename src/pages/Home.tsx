@@ -50,8 +50,6 @@ const Home: React.FC = () => {
       url: URL,
       method: "get",
     }).then((res) => {
-      // console.log(res.data.results);
-      console.log(res.data.results);
       setHeroes([...heroes, ...res.data.results]);
     });
   };
@@ -60,7 +58,7 @@ const Home: React.FC = () => {
       pushData();
       console.log("Loaded data");
       ev.target.complete();
-      if (heroes.length === 1000) {
+      if (heroes.length === 10) {
         setInfiniteDisabled(true);
       }
     }, 500);
@@ -106,13 +104,6 @@ const Home: React.FC = () => {
               <IonLabel className="ion-text-wrap">{h.name}</IonLabel>
             </IonItem>
           ))}
-          {/* {data.map((item, index) => {
-            return (
-              <IonItem key={index}>
-                <IonLabel>{item}</IonLabel>
-              </IonItem>
-            );
-          })} */}
         </IonList>
 
         <IonInfiniteScroll
