@@ -24,32 +24,34 @@ export interface Hero {
   gender: string;
   films: string[];
   starships: string[];
+  url: string;
 }
 
 const Home: React.FC = () => {
   const [isInfiniteDisabled, setInfiniteDisabled] = useState(false);
   const [heroes, setHeroes] = useState<Hero[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [nextPage, setNextPage] = useState();
+  const [count, setCount] = useState();
   let history = useHistory();
 
-  const pushData = () => {
-    const URL = "https://swapi.dev/api/people/?page=2";
+  const loadData = (ev: any) => {
+    pushData(ev);
+    console.log("Loaded data");
+    if (heroes.length === count) {
+      setInfiniteDisabled(true);
+    }
+  };
+
+  const pushData = (infinteScroll: any) => {
     return axios({
-      url: URL,
+      url: nextPage,
       method: "get",
     }).then((res) => {
+      setNextPage(res.data.next);
       setHeroes([...heroes, ...res.data.results]);
+      infinteScroll.target.complete();
     });
-  };
-  const loadData = (ev: any) => {
-    setTimeout(() => {
-      pushData();
-      console.log("Loaded data");
-      ev.target.complete();
-      if (heroes.length === 10) {
-        setInfiniteDisabled(true);
-      }
-    }, 800);
   };
 
   React.useEffect(() => {
@@ -61,6 +63,8 @@ const Home: React.FC = () => {
       url: URL,
       method: "get",
     }).then((response) => {
+      setNextPage(response.data.next);
+      setCount(response.data.count);
       setHeroes(response.data.results);
       setIsLoading(false);
     });
@@ -68,7 +72,6 @@ const Home: React.FC = () => {
   if (isLoading) {
     return <IonSpinner name="crescent" className="spinnerCenter"></IonSpinner>;
   }
-
   return (
     <IonPage>
       <IonHeader>
@@ -84,7 +87,9 @@ const Home: React.FC = () => {
             <IonItem
               key={i}
               onClick={() => {
-                history.push(`/hero/${h.name}`, { params: h });
+                let paramUrl = h.url.split("/");
+                const last = paramUrl[paramUrl.length - 2];
+                history.push(`/hero/${last}`, { params: h });
               }}
             >
               <div slot="start" className="dot dot-unread"></div>
