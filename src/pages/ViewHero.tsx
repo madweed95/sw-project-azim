@@ -12,6 +12,7 @@ import {
   IonLabel,
   IonIcon,
   IonSpinner,
+  IonLoading,
 } from "@ionic/react";
 import { useLocation } from "react-router";
 import { Hero } from "./Home";
@@ -26,23 +27,39 @@ const CardHeroes: React.FC = () => {
   const [films, setFilms] = useState<string[]>([]);
   const [selectedSegment, setselectedSegment] = useState<string>("films");
   const [isLoading, setIsLoading] = useState(true);
-
   const location = useLocation<[]>();
-  const parHero: any = location.state;
+  const [Loading, setLoading] = useState(false);
 
   React.useEffect(() => {
-    setHero(parHero.params);
+    fetchHero();
+  }, []);
+
+  let path = location.pathname.split("/");
+  let idHero = path[path.length - 1];
+  const URL = `https://swapi.dev/api/people/${idHero}`;
+  const fetchHero = () => {
+    return axios({
+      url: URL,
+      method: "get",
+    }).then((response) => {
+      setHero(response.data);
+      setIsLoading(false);
+    });
+  };
+  React.useEffect(() => {
+    setHero(hero);
   }, []);
 
   React.useEffect(() => {
     if (hero) {
+      setLoading(true);
       axios.all(hero.films.map((f) => axios.get(f))).then((value) => {
         let filmsData: string[] = [];
         value.map((filmData) => {
           filmsData.push(filmData.data.title);
         });
         setFilms(filmsData);
-        setIsLoading(false);
+        setLoading(false);
       });
 
       axios.all(hero.starships.map((s) => axios.get(s))).then((value) => {
@@ -106,18 +123,37 @@ const CardHeroes: React.FC = () => {
 
         <IonContent className="ion-padding">
           <IonCard>
-            {selectedSegment === "films" &&
+            {selectedSegment === "films" && Loading ? (
+              <IonSpinner name="crescent"></IonSpinner>
+            ) : selectedSegment === "films" && films.length === 0 ? (
+              <ul>
+                <li>NO INFORMATION ABOUT FILMS</li>
+              </ul>
+            ) : (
+              selectedSegment === "films" &&
               films.map((f) => (
                 <ul key={f}>
                   <li>{f}</li>
                 </ul>
-              ))}
-            {selectedSegment === "starships" &&
+              ))
+            )}
+          </IonCard>
+
+          <IonCard>
+            {selectedSegment === "starships" && Loading ? (
+              <IonSpinner name="crescent"></IonSpinner>
+            ) : selectedSegment === "starships" && ships.length === 0 ? (
+              <ul>
+                <li>NO INFORMATION ABOUT SHIPS</li>
+              </ul>
+            ) : (
+              selectedSegment === "starships" &&
               ships.map((s) => (
                 <ul key={s}>
                   <li>{s}</li>
                 </ul>
-              ))}
+              ))
+            )}
           </IonCard>
         </IonContent>
       </IonContent>

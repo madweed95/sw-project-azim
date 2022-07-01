@@ -32,15 +32,12 @@ const Home: React.FC = () => {
   const [heroes, setHeroes] = useState<Hero[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [nextPage, setNextPage] = useState();
-  const [count, setCount] = useState();
   let history = useHistory();
 
   const loadData = (ev: any) => {
-    pushData(ev);
+    if (!nextPage) setInfiniteDisabled(true);
+    else pushData(ev);
     console.log("Loaded data");
-    if (heroes.length === count) {
-      setInfiniteDisabled(true);
-    }
   };
 
   const pushData = (infinteScroll: any) => {
@@ -57,6 +54,7 @@ const Home: React.FC = () => {
   React.useEffect(() => {
     fetchHeroes();
   }, []);
+
   const URL = "https://swapi.dev/api/people";
   const fetchHeroes = () => {
     return axios({
@@ -64,7 +62,6 @@ const Home: React.FC = () => {
       method: "get",
     }).then((response) => {
       setNextPage(response.data.next);
-      setCount(response.data.count);
       setHeroes(response.data.results);
       setIsLoading(false);
     });
@@ -83,13 +80,13 @@ const Home: React.FC = () => {
         <IonHeader collapse="condense"></IonHeader>
 
         <IonList>
-          {heroes.map((h, i) => (
+          {heroes.map((h) => (
             <IonItem
-              key={i}
+              key={h.url}
               onClick={() => {
                 let paramUrl = h.url.split("/");
-                const last = paramUrl[paramUrl.length - 2];
-                history.push(`/hero/${last}`, { params: h });
+                const idHero = paramUrl[paramUrl.length - 2];
+                history.push(`/hero/${idHero}`, { params: h });
               }}
             >
               <div slot="start" className="dot dot-unread"></div>
