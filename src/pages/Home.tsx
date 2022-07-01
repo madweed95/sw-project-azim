@@ -86,7 +86,7 @@ const Home: React.FC = () => {
               onClick={() => {
                 let paramUrl = h.url.split("/");
                 const idHero = paramUrl[paramUrl.length - 2];
-                history.push(`/hero/${idHero}`, { params: h });
+                history.push(`/hero/${idHero}`);
               }}
             >
               <div slot="start" className="dot dot-unread"></div>
